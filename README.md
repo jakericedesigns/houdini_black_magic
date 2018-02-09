@@ -20,9 +20,9 @@ f@val;
 
 #MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOI
 
-Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in.
+Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. 
 
-Remember i said voodoo shit, when i said let that sink in, nothing probably sank in youre drugged the fuck up jake what r u doing this is why u write things down because u are an addict~~~ We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
+We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
 
 Let's start with this: 
 
