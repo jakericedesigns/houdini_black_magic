@@ -6,7 +6,7 @@ some serious voodo bruh.
 This is honestly like stuff you should only whip out when trying to impress a honey u kno? SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript orr python. Take a second and let that sink in, python.
 
 DROP THIS IN THIS TOP WRANGLE BOY:
-```
+```c
 float r = rand(@ptnum) * 3;
 r = floor(r);
 
@@ -29,7 +29,7 @@ Let's start with this:
 
 
 SET THE BOTTOM ONE TO RUN IN PYTHON MODE
-```
+```py
 node = hou.pwd()
 input = node.inputs()
 geo = input[0].geometry()
@@ -66,7 +66,7 @@ This line specifically: `out += "val = a%s(10);\n" % (point.attribValue("class")
 If you want to see the vex this outputs just click on the VEXpression parm and boom you can see what this outputs. wowowowowowow.
 I only have 4 points in this example, so here's what that would look like when it gets parsed:
 
-```
+```c
     float aa(float i){ 
         return pow(i, 2); 
     }
