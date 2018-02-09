@@ -64,3 +64,26 @@ WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. all it does is show how you can d
 This line specifically: `out += "val = a%s(10);\n" % (point.attribValue("class"))`
 
 If you want to see the vex this outputs just click on the VEXpression parm and boom you can see what this outputs. wowowowowowow.
+I only have 4 points in this example, so here's what that would look like when it gets parsed:
+
+```
+    float aa(float i){ 
+        return pow(i, 2); 
+    }
+    float ab(float i){ 
+        return exp(i); 
+    }
+    float ac(float i){ 
+        return sqrt(i);
+    } 
+float val;
+val = ab(10);
+setpointattrib(0, 'val', 0, val);
+val = aa(10);
+setpointattrib(0, 'val', 1, val);
+val = ac(10);
+setpointattrib(0, 'val', 2, val);
+val = aa(10);
+setpointattrib(0, 'val', 3, val);
+```
+BAM DONE. NEXT!
