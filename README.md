@@ -8,7 +8,7 @@ This is honestly like stuff you should only whip out when trying to impress a ho
 ## EXAMPLE 1 - WRITING VEX WITH PYTHON
 SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript orr python. Take a second and let that sink in, python.
 
-DROP THIS IN THE FIRST WRANGLE BOY:
+### IN WRANGLE #1:
 ```c
 float r = rand(@ptnum) * 3;
 r = floor(r);
@@ -21,13 +21,10 @@ f@val;
 ```
 
 
-### MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOYE
+### IN WRANGLE #2:
 
 Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. 
-
-We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
-
-### SET THE BOTTOM WRANGLE TO RUN AS A PYTHON EXPRESSION
+Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
 
 ```py
 node = hou.pwd()
@@ -60,7 +57,7 @@ return out
 
 
 
-#WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. 
+### WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. 
 All it does is show how you can dynamically complete VEX expressions with python, notice how im filling in the suffix of the function name in the first line of code in the for loop?
 
 This line specifically: `out += "val = a%s(10);\n" % (point.attribValue("class"))`
