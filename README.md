@@ -3,7 +3,10 @@ some serious voodo bruh.
 
 
 
-This is honestly like stuff you should only whip out when trying to impress a honey u kno? SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript orr python. Take a second and let that sink in, python.
+This is honestly like stuff you should only whip out when trying to impress a honey u kno? 
+
+# EXAMPLE 1 - WRITING VEX WITH PYTHON
+SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript orr python. Take a second and let that sink in, python.
 
 DROP THIS IN THIS TOP WRANGLE BOY:
 ```c
@@ -18,17 +21,14 @@ f@val;
 ```
 
 
-#MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOI
+# MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOYE
 
 Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. 
 
 We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
 
-Let's start with this: 
+# SET THE BOTTOM ONE TO RUN IN PYTHON MODE
 
-
-
-SET THE BOTTOM ONE TO RUN IN PYTHON MODE
 ```py
 node = hou.pwd()
 input = node.inputs()
@@ -60,7 +60,9 @@ return out
 
 
 
-WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. all it does is show how you can dynamically complete VEX expressions with python, notice how im filling in the suffix of the function name in the first line of code in the for loop?
+#WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. 
+All it does is show how you can dynamically complete VEX expressions with python, notice how im filling in the suffix of the function name in the first line of code in the for loop?
+
 This line specifically: `out += "val = a%s(10);\n" % (point.attribValue("class"))`
 
 If you want to see the vex this outputs just click on the VEXpression parm and boom you can see what this outputs. wowowowowowow.
