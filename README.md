@@ -9,6 +9,7 @@ DROP THIS IN THIS TOP WRANGLE BOY:
 ```
 float r = rand(@ptnum) * 3;
 r = floor(r);
+
 if(r == 0) s@class = "a";
 if(r == 1) s@class = "b";
 if(r == 2) s@class = "c";
@@ -17,11 +18,11 @@ f@val;
 ```
 
 
-#MOVING ON TO THE SECOND WRANGLE. 
+#MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOI
 
 Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in.
 
-Remember i said voodoo shit, when i said let that sink in, nothing probably sank in youre drugged the fuck up jake what r u doing. We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
+Remember i said voodoo shit, when i said let that sink in, nothing probably sank in youre drugged the fuck up jake what r u doing this is why u write things down because u are an addict~~~ We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
 
 Let's start with this: 
 
@@ -56,3 +57,10 @@ for i, point in enumerate(points):
 return out
    
 ```
+
+
+
+WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. all it does is show how you can dynamically complete VEX expressions with python, notice how im filling in the suffix of the function name in the first line of code in the for loop?
+This line specifically: `out += "val = a%s(10);\n" % (point.attribValue("class"))`
+
+If you want to see the vex this outputs just click on the VEXpression parm and boom you can see what this outputs. wowowowowowow.
