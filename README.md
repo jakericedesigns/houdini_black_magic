@@ -5,7 +5,7 @@ some serious voodo bruh.
 
 This is honestly like stuff you should only whip out when trying to impress a honey u kno? 
 
-# EXAMPLE 1 - WRITING VEX WITH PYTHON
+## EXAMPLE 1 - WRITING VEX WITH PYTHON
 SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript orr python. Take a second and let that sink in, python.
 
 DROP THIS IN THIS TOP WRANGLE BOY:
@@ -21,13 +21,13 @@ f@val;
 ```
 
 
-# MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOYE
+### MOVING ON TO THE SECOND WRANGLE. MAKE IT A DETAIL BOYE
 
 Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. 
 
 We're going to do some ultra dumb shit, let's use python to write VEX. Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
 
-# SET THE BOTTOM ONE TO RUN IN PYTHON MODE
+### SET THE BOTTOM ONE TO RUN IN PYTHON MODE
 
 ```py
 node = hou.pwd()
