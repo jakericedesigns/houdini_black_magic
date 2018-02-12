@@ -1,5 +1,7 @@
 # houdini_black_magic
 some serious voodo bruh. 
+This is going to eventually become a lot of contributions to the advanced section on the community site :o
+Right now it's quite unprofessionally written and has not been proofread at all.
 
 
 
