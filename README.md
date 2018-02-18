@@ -92,7 +92,7 @@ BAM DONE. NEXT!
 
 
 
-##EXAMPLE 2 - The Covariance Matrix/PCA
+## EXAMPLE 2 - The Covariance Matrix/PCA
 
 Hello my dudes. Prior knowledge needed for this is defo like linear algebra, and maybe a bit of statistics. Covariance is a concept that comes up all over the place in the land of statistics and higher levels of math. It's a really nice tool for solving all kinds of problems, including finding an oriented bounding box for a given point set, adding normals to a point cloud for relighting, among many others.
 
@@ -102,7 +102,7 @@ Also I'm writing this in VEX (like an easier C), however I'm trying to code it i
 
 At the crux of a variance, and likewise covariance is the idea of finding the mean (AKA the average value) of a data set. In the case of something like houdini there are plenty of ways averaging the values of all sorts of different operations, let's start this off by working with the average X position of the classic pighead.
 
-So let's drop down a pighead and then a wrangle in detail mode.
+### So let's drop down a pighead and then a wrangle in detail mode.
 
 ```c
 float xavg(int input){
