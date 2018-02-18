@@ -280,7 +280,7 @@ Yeah. Like i said it's difficult, and like honestly it just doesn't make that mu
 
 And then finally the code:
 
-```
+```c
 //power iteration to find the largest eigen vector
 //https://en.wikipedia.org/wiki/Power_iteration
 
