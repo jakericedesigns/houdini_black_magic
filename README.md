@@ -259,9 +259,9 @@ for(int i = 0; i < npoints(0); i++){
 
 //create our symmetric covar matrix
 vector row1, row2, row3;
-row1 = set(covar(pos_array, 0, 0), covar(pos_array, 0, 1), covar(pos_array, 0, 2));
-row2 = set(covar(pos_array, 1, 0), covar(pos_array, 1, 1), covar(pos_array, 1, 2));
-row3 = set(covar(pos_array, 2, 0), covar(pos_array, 2, 1), covar(pos_array, 2, 2));
+row1 = set(covariance(pos_array, 0, 0), covariance(pos_array, 0, 1), covariance(pos_array, 0, 2));
+row2 = set(covariance(pos_array, 1, 0), covariance(pos_array, 1, 1), covariance(pos_array, 1, 2));
+row3 = set(covariance(pos_array, 2, 0), covariance(pos_array, 2, 1), covariance(pos_array, 2, 2));
 
 matrix3 m = set(row1, row2, row3);
 3@m = m;
