@@ -105,6 +105,7 @@ At the crux of a variance, and likewise covariance is the idea of finding the me
 ### So let's drop down a pighead and then a wrangle in detail mode.
 
 ```c
+//THIS GOES INTO A DETAIL WRANGLE
 float xavg(int input){
 	float avg = 0;
 	for(int i = 0; i < npoints(input); i++){
@@ -127,6 +128,7 @@ So now instead of doing xavg, let's write the function for xvariance!
 
 
 ```c
+//THIS GOES INTO A DETAIL WRANGLE
 float xvariance(int input){
 	float avg = xavg(input);
 	float variance = 0;
@@ -160,6 +162,7 @@ This is all probably easier to see in code....
 
 
 ```c
+//THIS GOES INTO A DETAIL WRANGLE
 vector pos_avg(int input){
 	vector avg = 0;
 	for(int i = 0; i < npoints(input); i++){
@@ -232,8 +235,8 @@ outerproduct(A, A) ==
 ```
 
 Well that's convenient, since we already know a core part of variance is that it's the squared distance to the mean, over the number of samples minus 1. And if we substitute our delta (the distance from our sample to the mean) for A in the above outerproduct example, you'll see it creates a matrix of partially solved variance results. The final things we need to do to make it correct are:
-* divide out the number of points minus one, as discussed before.
 * sum this matrix up over all points in the mesh, like we do in our previous examples!
+* then, we can divide out the number of points minus one from the sum, as discussed before.
 
 
 ```c
@@ -241,10 +244,13 @@ Well that's convenient, since we already know a core part of variance is that it
 vector delta = v@P - detail(0, "avg_pos");
 matrix3 covar = outerproduct(delta, delta);
 
-covar /= float(npoints(0)) - 1.;
-
 setdetailattrib(0, "covar", covar, "add");
 
+```
+
+```c
+//THIS GOES INTO A DETAIL WRANGLE
+3@covar /= float(npoints(0)) - 1.;
 ```
 
 That's so much cleaner. I love you Houdini.
