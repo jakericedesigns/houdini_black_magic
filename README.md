@@ -201,9 +201,10 @@ float covariance_xy(int input){
 @covariance = covariance_xy(0);
 ```
 
-Boom, that's it. But we work in 3d, and that's a two dimensional variance anylysis. Sooooo how do we make it work in 3d. Well quite simply we build of the covariance on each axis matrix. 
+Boom, that's it, you have now mastered basic covariance.
 
-### COVARIANCE AND DOING THIS WHOLE TING SMARTER 
+### COVARIANCE MATRICES AND DOING THIS WHOLE TING SMARTER 
+We work in 3d, and that's a two dimensional variance anylysis. So what we need is a matrix of covariance.
 
 ```c
 //a sample covariance matrix
