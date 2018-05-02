@@ -103,12 +103,14 @@ Like always we'll be using Houdini and it's internal scripting language, VEX for
 To understand Covariance, you must first understand variance. At it's core variance is all about finding the squared delta (difference) of a variable to it's mean. Or in more readable terms, what's the average distance from any sample in a data set, to it's average.
 
 In a 1 dimensional system, where X is some random variable with *n* samples, variance is defined as this:
+
 ![Variance Equation](./img/variance_equation.svg)
 
 Where ![mu](./img/mu.svg) is the mean of our data set defined by:
+
 ![1d Mean Equation](./img/mean_equation_1d.svg)
 
-In the case of something like houdini there are plenty of ways averaging the values of all sorts of different operations, let's start this off by working with the average X position of the classic pighead.
+As a refresher, let's start by just doing the variance of the X axis of a given input object.
 
 ### So let's drop down a pighead and then a wrangle in detail mode.
 
@@ -126,13 +128,9 @@ float xavg(int input){
 @xavg = xavg(0);
 ```
 
-The above code will return the average X position of all the point coming in from input 0 of our wrangle. Neat. Since this is the advanced section of the wiki, that should be a refresher.
+Again since the prior knowledge asks for linear algebra, I'll assume you understand how to calculate the average of a data set...
 
-Now how does that relate to variance. First it's important to understand why I used just the X component in my above mean calculation, when really you can quite easily average vector values. Variance by definition is a one dimensional calculation. It's actually an incredibly simple concept, all variance is, is the sum of all the SQUARED distances from a given point in the data set, to the mean or of that data set. 
-
-Basically how much does a given sample differ from the average of all samples.
-
-
+From here all we need to is calculate the squared distance from a given sample to the average, sum that up over all samples and divide out our sample size to normalize it!
 
 ```c
 //THIS GOES INTO A DETAIL WRANGLE
@@ -150,13 +148,13 @@ float xvariance(int input){
 		variance += x;
 	}
 
-	return variance / (float(n) - 1);
+	return variance / float(n);
 }
 
 @xvariance = xvariance(0);
 ```
 
-But wait, why am i subtracting one from our total point count when returning variance, when i dont do that when i return average. To be honest, that's probably the hardest part of this whole thing to explain (minus eigenvectors), and I'd rather let true math wizards explain that, so if you're curious, check the bottom of page three of this PDF: http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
+
 
 Alright bubs we're inching ever closer, now what is covariance. Covariance is stupid simple, since I said variance is a one dimensional operation, covariance is the same thing but on two axix. By that I mean we should now calculate the mean of the x axis and the mean of the y axis, and then find the combined* distance from any of the given data points.
 
@@ -208,6 +206,9 @@ float covar(int input, int a, int b){
 @covariance = covariance(0, 0, 1);
 ```
 
+But wait, why am i subtracting one from our total point count when returning covariance and not variance... To be honest, that's probably the hardest part of this whole thing to explain (minus eigenvectors), and I'd rather let true math wizards explain that, so if you're curious, check the bottom of page three of this PDF: http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
+
+
 But we work in 3d, and that's a two dimensional variance anylysis. So what we need is a matrix of covariance. The below code block is what a basic covariance matrix looks like with the functions we defined above.
 
 ```c
@@ -226,6 +227,7 @@ set(covar(0, x, x), covar(0, x, y), covar(0, x, z),
 The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build **OUR FULL COVARIANCE MATRIX** in a way that's so much more algebraic and Houdini way in execution.
 
 First step is to find the average position of our mesh, for that a simple attribute promote from point `P` to a detail attribute will work.
+
 ![Attribute Promotion](./img/attrib_promote.png)
 
 Next we need to get the delta from our position to the average so we can start building the covariance matrix
