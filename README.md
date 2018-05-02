@@ -128,19 +128,11 @@ So now instead of doing xavg, let's write the function for xvariance!
 
 ```c
 float xvariance(int input){
-	float avg = 0;
+	float avg = xavg(input);
 	float variance = 0;
-
+	
 	int n = npoints(input);
-
-	for(int i = 0; i < n; i++){
-		float x = point(input, "P", i)[0];
-		avg += x;
-	}
-
-	//the mean of our data set
-	avg = avg / float(n);
-
+	
 	for(int j = 0; j < n; j++){
 		float x = point(input, "P", i)[0];
 		x = x - avg;
@@ -161,27 +153,29 @@ Alright bubs we're inching ever closer, now what is covariance. Covariance is st
 
 I say combined, because instead of squaring the delta (distance) from x to the average, you multiply the x delta by the y delta.
 
-it's probably easier to see in code....
+In order to make things easier, im going to also update the `xavg` function to a more general `pos_avg()` function. 
+
+This is all probably easier to see in code....
+
+
 
 ```c
-float covariance(int input){
-	float xavg = 0;
-	float yavg = 0;
+vector pos_avg(int input){
+	vector avg = 0;
+	for(int i = 0; i < npoints(input); i++){
+		vector a = point(input, "P", i);
+		avg += a;
+	}
+	return avg / float(npoints(input));
+}
+
+
+float covariance_xy(int input){
+	float xavg = pos_avg(input)[0];
+	float yavg = pos_avg(input)[1];
 	float covariance = 0;
 
 	int n = npoints(input);
-
-	for(int i = 0; i < n; i++){
-		vector p = point(input, "P", i);
-		float x = p.x;
-		float y = p.y;
-		xavg += x;
-		yavg += y;
-	}
-
-	//the means of our two dimensions
-	xavg = xavg / float(n);
-	yavg = yavg / float(n);
 
 	for(int j = 0; j < n; j++){
 		vector p = point(input, "P", i);
@@ -201,7 +195,7 @@ float covariance(int input){
 	return covariance / (float(n) - 1);
 }
 
-@covariance = covariance(0);
+@covariance = covariance_xy(0);
 ```
 
 Boom, that's it. But we work in 3d, and that's a two dimensional variance anylysis. Sooooo how do we make it work in 3d. Well quite simply we build of the covariance on each axis matrix. 
@@ -214,61 +208,49 @@ Meaning our matrix will look like:
 [covar(z,x), covar(z, y), covar(z, z)]
 ```
 
-The above matrix is really interesting to me for a few reasons, first and most importantly you'll notice the diagnol of the matrix, is actually just the variance on each individual dimension. Another interesting property is that the matrix is symmetric along the daignol, meaning if you take the transpose of it, the values should stay the exact same. Neat.
+The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build this matrix in a way that's so much more Algebraic and Houdini way in execution.
 
-Okay so let's modify our code to work for a 3 dimensional covariance matrix. Im going to change the syntax of a few things to make it easier to build. One key one being, the values we want to find the covariance for, will be stored in an array prior to calculating the matrix, that way we don't have to search a shit ton of times.
+First step is to find the average position of our mesh, for that a simple attribute promote from point `P` to a detail attribute will work.
+
+Next we need to get the delta from our position to the average so we can start building the covariance matrix
+
+```c
+//THIS GOES INTO A POINT WRANGLE
+vector delta = v@P - detail(0, "avg_pos");
+```
+
+
+The next part is where things get fun, if you think about the definition of the outer product operator, you might come to realize that if you take the outer product of a vector and itself you're left with a symmetric matrix. Here's a visual to help:
+
+```c
+vector A;
+outerproduct(A, A) ==
+
+[A.x * A.x, A.x * A.y, A.x * A.z]
+[A.y * A.x, A.y * A.y, A.y * A.z]
+[A.z * A.x, A.z * A.y, A.z * A.z]
+```
+
+Well that's convenient, since we already know a core part of variance is that it's the squared distance to the mean, over the number of samples minus 1. And if we substitute our delta (the distance from our sample to the mean) for A in the above outerproduct example, you'll see it creates a matrix of partially solved variance results. The final things we need to do to make it correct are:
+* divide out the number of points minus one, as discussed before.
+* sum this matrix up over all points in the mesh, like we do in our previous examples!
 
 
 ```c
-float covariance(vector a[]; int c, d){
-	//vector a[] is our input data set
-	//int c, d are the vector components we want to analyze
+//THIS GOES INTO A POINT WRANGLE
+vector delta = v@P - detail(0, "avg_pos");
+matrix3 covar = outerproduct(delta, delta);
 
-    float cvr;
-    float avgx, avgy;
-    int i, j;
-    
-    
-    for(j = 0; j < len(a); j++){
-        avgx += a[j][c];
-        avgy += a[j][d];
-    }
-    
-    avgx /= len(a);
-    avgy /= len(a);
-    
-    for(i = 0; i < len(a); i++){
-        float x = (a[i][c] - avgx);
-        float y = (a[i][d] - avgy);
-        cvr += x * y;
-        }
-    
-    cvr /= len(a) - 1;    
-    return cvr;
-}
+covar /= float(npoints(0)) - 1.;
 
+setdetailattrib(0, "covar", covar, "sum");
 
-//build our array of point positions
-vector pos_array[];
-for(int i = 0; i < npoints(0); i++){
-    vector p = point(0, "P", i);
-    append(pos_array, p);
-}
-
-
-
-//create our symmetric covar matrix
-vector row1, row2, row3;
-row1 = set(covariance(pos_array, 0, 0), covariance(pos_array, 0, 1), covariance(pos_array, 0, 2));
-row2 = set(covariance(pos_array, 1, 0), covariance(pos_array, 1, 1), covariance(pos_array, 1, 2));
-row3 = set(covariance(pos_array, 2, 0), covariance(pos_array, 2, 1), covariance(pos_array, 2, 2));
-
-matrix3 m = set(row1, row2, row3);
-3@m = m;
 ```
 
-BOOM FUCKING EASY MATES. 
+That's so much cleaner. I love you Houdini.
 
+
+## EIGEN VECTORS ARE FUNKY STUFF 
 
 Alright now comes the actually difficult part. It's not difficult in implementation, but it is difficult to understand. We are now entering the world of principal component analysis (PCA for short). PCA at it's core is a tool that helps us as wizards, determine the principal components of a given input. Below is a simple diagram showing the principal curvatures (slightly different) of a given surface. The principal components, are the directions of flow that most accuractely describe the surface. That's still really hard to understand... An even easier way to describe it, is if we want an oriented, 3d bounding box, it needs to be oriented to the principal components of the input mesh.... fuck.
 
