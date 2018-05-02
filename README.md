@@ -94,13 +94,21 @@ BAM DONE. NEXT!
 
 ## EXAMPLE 2 - The Covariance Matrix/PCA
 
-Hello my dudes. Prior knowledge needed for this is defo like linear algebra, and maybe a bit of statistics. Covariance is a concept that comes up all over the place in the land of statistics and higher levels of math. It's a really nice tool for solving all kinds of problems, including finding an oriented bounding box for a given point set, adding normals to a point cloud for relighting, among many others.
+Hello my dudes. Prior knowledge needed for this is defo like linear algebra, and maybe a bit of statistics. Covariance is a concept that comes up all over the place in the land of statistics and higher levels of math. With the extention of PCA (principal component analysis) we can turn covariance into a powerhouse of a tool that can be used for solving all types of problems, from adding normals to a point cloud, to creating an oriented bounding box for a given object.
 
 If you don't care to understand how this works, just scroll to the bottom, but just know that i h8 u for it :(
 
-Also I'm writing this in VEX (like an easier C), however I'm trying to code it in the most readable way, as this can be easily implemented in pretty much any language. Though i would guess you have access to libraries for this stuff...
+Like always we'll be using Houdini and it's internal scripting language, VEX for this.
 
-At the crux of a variance, and likewise covariance is the idea of finding the mean (AKA the average value) of a data set. In the case of something like houdini there are plenty of ways averaging the values of all sorts of different operations, let's start this off by working with the average X position of the classic pighead.
+To understand Covariance, you must first understand variance. At it's core variance is all about finding the squared delta (difference) of a variable to it's mean. Or in more readable terms, what's the average distance from any sample in a data set, to it's average.
+
+In a 1 dimensional system, where X is some random variable with *n* samples, variance is defined as this:
+![Variance Equation](./img/variance_equation.svg)
+
+Where ![mu](./img/mu.svg) is the mean of our data set defined by:
+![1d Mean Equation](./img/mean_equation_1d.svg)
+
+In the case of something like houdini there are plenty of ways averaging the values of all sorts of different operations, let's start this off by working with the average X position of the classic pighead.
 
 ### So let's drop down a pighead and then a wrangle in detail mode.
 
@@ -120,11 +128,10 @@ float xavg(int input){
 
 The above code will return the average X position of all the point coming in from input 0 of our wrangle. Neat. Since this is the advanced section of the wiki, that should be a refresher.
 
-Now how does that relate to variance. First it's important to understand why I used just the X component in my above mean calculation, when really you can quite easily average vector values. Variance by definition is a one dimensional calculation. It's actually an incredibly simple concept, all variance is, is the sum of all the SQUARED distances from a given point in the data set, to the mean or of that data set, all divided by the length of the data set (to normalize the values).
+Now how does that relate to variance. First it's important to understand why I used just the X component in my above mean calculation, when really you can quite easily average vector values. Variance by definition is a one dimensional calculation. It's actually an incredibly simple concept, all variance is, is the sum of all the SQUARED distances from a given point in the data set, to the mean or of that data set. 
 
-You might be wondering why we're using the squared distance instead of the euclidean distance, since variance is only a distance test, keeping the distance squared helps excentuate the deviation between different points to the average. It'd still probably work if you took the euclidean distance, but that'd add extra computation time that's unnecessary. And if you're confused as to why we square the value, it's because it prevents us from having any negative distances, which would be stupid. 
+Basically how much does a given sample differ from the average of all samples.
 
-So now instead of doing xavg, let's write the function for xvariance!
 
 
 ```c
@@ -172,10 +179,10 @@ vector pos_avg(int input){
 	return avg / float(npoints(input));
 }
 
-
-float covariance_xy(int input){
-	float xavg = pos_avg(input)[0];
-	float yavg = pos_avg(input)[1];
+//WHERE A and B are the vector components you want to test against
+float covar(int input, int a, int b){
+	float a_avg = pos_avg(input)[a];
+	float b_avg = pos_avg(input)[b];
 	float covariance = 0;
 
 	int n = npoints(input);
@@ -183,11 +190,11 @@ float covariance_xy(int input){
 	for(int j = 0; j < n; j++){
 		vector p = point(input, "P", i);
 		
-		float x = p.x;
-		float y = p.y;
+		float x = p[a];
+		float y = p[b];
 
-		x = x - xavg;
-		y = y - yavg;
+		x = x - a_avg;
+		y = y - b_avg;
 
 		//x * y instead of x * x
 		x = x * y;
@@ -197,23 +204,26 @@ float covariance_xy(int input){
 
 	return covariance / (float(n) - 1);
 }
-
-@covariance = covariance_xy(0);
+//covariance between the X and Y axis
+@covariance = covariance(0, 0, 1);
 ```
 
-Boom, that's it, you have now mastered basic covariance.
-
-### COVARIANCE MATRICES AND DOING THIS WHOLE TING SMARTER 
-We work in 3d, and that's a two dimensional variance anylysis. So what we need is a matrix of covariance.
+But we work in 3d, and that's a two dimensional variance anylysis. So what we need is a matrix of covariance. The below code block is what a basic covariance matrix looks like with the functions we defined above.
 
 ```c
 //a sample covariance matrix
-[covar(x, x), covar(x, y), covar(x,z)]
-[covar(y,x), covar(y, y),  covar(y,z)]
-[covar(z,x), covar(z, y), covar(z, z)]
+
+int x = 0, y = 1, z = 2;
+
+matrix3 covar = 
+set(covar(0, x, x), covar(0, x, y), covar(0, x, z),
+ 	covar(0, y, x), covar(0, y, y), covar(0, y, z),
+	covar(0, z, x), covar(0, z, y), covar(0, z, z))
 ```
 
-The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build `OUR FULL COVARIANCE MATRIX` in a way that's so much more Algebraic and Houdini way in execution.
+### COVARIANCE MATRICES AND DOING THIS WHOLE TING SMARTER 
+
+The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build **OUR FULL COVARIANCE MATRIX** in a way that's so much more algebraic and Houdini way in execution.
 
 First step is to find the average position of our mesh, for that a simple attribute promote from point `P` to a detail attribute will work.
 ![Attribute Promotion](./img/attrib_promote.png)
@@ -226,7 +236,7 @@ vector delta = v@P - detail(0, "avg_pos");
 ```
 
 
-The next part is where things get fun, if you think about the definition of the outer product operator, you might come to realize that if you take the outer product of a vector and itself you're left with a symmetric matrix. Here's a visual to help:
+The next part is where things get fun, if you think about the definition of the outer product operator, you might come to realize that if you take the outer product of a vector and its' transpose you're left with a symmetric matrix. Here's a visual to help:
 
 ```c
 vector A;
@@ -237,7 +247,7 @@ outerproduct(A, A) ==
 [A.z * A.x, A.z * A.y, A.z * A.z]
 ```
 
-Well that's convenient, since we already know a core part of variance is that it's the squared distance to the mean, over the number of samples minus 1. And if we substitute our delta (the distance from our sample to the mean) for A in the above outerproduct example, you'll see it creates a matrix of partially solved variance results. The final things we need to do to make it correct are:
+Well that's convenient, since we already know a core part of variance is that it's the squared distance to the mean, over the number of samples minus 1. And if we substitute our delta (the distance from our sample to the mean) for A in the above outerproduct example, you'll see it creates a matrix of partially solved variance results. The final things we then need to do to make it correct are:
 * sum this matrix up over all points in the mesh, like we do in our previous examples!
 * then, we can divide out the number of points minus one from the sum, as discussed before.
 
@@ -247,19 +257,25 @@ Well that's convenient, since we already know a core part of variance is that it
 vector delta = v@P - detail(0, "avg_pos");
 matrix3 covar = outerproduct(delta, delta);
 
+//this is the exact same thing as an attribute promotion in add mode!
 setdetailattrib(0, "covar", covar, "add");
 
 ```
+
+![Build Covar](./img/build_covar.png)
+
 
 ```c
 //THIS GOES INTO A DETAIL WRANGLE
 3@covar /= float(npoints(0)) - 1.;
 ```
 
-That's so much cleaner. I love you Houdini.
+![Normalize Covar](./img/normalize_covar.png)
+
+That's so much cleaner. I love you math.
 
 
-## EIGEN VECTORS ARE FUNKY STUFF 
+### EIGEN VECTORS ARE FUNKY STUFF 
 
 Alright now comes the actually difficult part. It's not difficult in implementation, but it is difficult to understand. We are now entering the world of principal component analysis (PCA for short). PCA at it's core is a tool that helps us as wizards, determine the principal components of a given input. Below is a simple diagram showing the principal curvatures (slightly different) of a given surface. The principal components, are the directions of flow that most accuractely describe the surface. That's still really hard to understand... An even easier way to describe it, is if we want an oriented, 3d bounding box, it needs to be oriented to the principal components of the input mesh.... fuck.
 
