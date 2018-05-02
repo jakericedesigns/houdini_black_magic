@@ -156,11 +156,13 @@ float xvariance(int input){
 
 
 
-Alright bubs we're inching ever closer, now what is covariance. Covariance is stupid simple, since I said variance is a one dimensional operation, covariance is the same thing but on two axix. By that I mean we should now calculate the mean of the x axis and the mean of the y axis, and then find the combined* distance from any of the given data points.
+Alright bubs we're inching ever closer, now what is covariance. Variance is a one dimensional test, therefore Covariance is the same test but over two dimensions. Or in other words, given two variables how do they collectively vary from their respective averages.
 
-I say combined, because instead of squaring the delta (distance) from x to the average, you multiply the x delta by the y delta.
+An easy way to think about this, is we want to know how well two variables correspond in terms of variation from the mean. So in the case of a covariance of 0, the variables don't correspond at all. The larger the covariance, the more one can assume the two variables correspond. Covariance can be negative as well, that would indicate anticorrelation, however for the sake of brevity, let's not dive down the statistical rabit hole...
 
-In order to make things easier, im going to also update the `xavg` function to a more general `pos_avg()` function. 
+Where X and Y are two random variables with *n* samples in each, and the function `E()` is the average of a given variable, covariance can be expressed as so:
+
+![Covariance Equation](./img/covariance_simple.svg)
 
 This is all probably easier to see in code....
 
@@ -206,8 +208,10 @@ float covar(int input, int a, int b){
 @covariance = covariance(0, 0, 1);
 ```
 
-But wait, why am i subtracting one from our total point count when returning covariance and not variance... To be honest, that's probably the hardest part of this whole thing to explain (minus eigenvectors), and I'd rather let true math wizards explain that, so if you're curious, check the bottom of page three of this PDF: http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
+But wait, why am i subtracting one from our total point count when returning covariance and not variance... The math equation above doesn't subtract one either... This has to do with unbiased vs biased estimates of covariance which again is more statistics bullshit. So for now just roll with it...
 
+If you demand an explanation, a good place to start would be this tutorial, at the bottom of page 3! 
+http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
 
 But we work in 3d, and that's a two dimensional variance anylysis. So what we need is a matrix of covariance. The below code block is what a basic covariance matrix looks like with the functions we defined above.
 
