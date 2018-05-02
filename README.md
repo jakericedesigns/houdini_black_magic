@@ -203,9 +203,10 @@ float covariance_xy(int input){
 
 Boom, that's it. But we work in 3d, and that's a two dimensional variance anylysis. Sooooo how do we make it work in 3d. Well quite simply we build of the covariance on each axis matrix. 
 
-Meaning our matrix will look like:
+### COVARIANCE AND DOING THIS WHOLE TING SMARTER 
 
 ```c
+//a sample covariance matrix
 [covar(x, x), covar(x, y), covar(x,z)]
 [covar(y,x), covar(y, y),  covar(y,z)]
 [covar(z,x), covar(z, y), covar(z, z)]
