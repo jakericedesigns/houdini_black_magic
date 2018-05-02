@@ -243,7 +243,7 @@ matrix3 covar = outerproduct(delta, delta);
 
 covar /= float(npoints(0)) - 1.;
 
-setdetailattrib(0, "covar", covar, "sum");
+setdetailattrib(0, "covar", covar, "add");
 
 ```
 
