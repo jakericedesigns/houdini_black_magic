@@ -211,7 +211,7 @@ Meaning our matrix will look like:
 [covar(z,x), covar(z, y), covar(z, z)]
 ```
 
-The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build this matrix in a way that's so much more Algebraic and Houdini way in execution.
+The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build `OUR FULL COVARIANCE MATRIX` in a way that's so much more Algebraic and Houdini way in execution.
 
 First step is to find the average position of our mesh, for that a simple attribute promote from point `P` to a detail attribute will work.
 
