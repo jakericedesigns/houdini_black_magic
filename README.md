@@ -213,9 +213,11 @@ But wait, why am i subtracting one from our total point count when returning cov
 If you demand an explanation, a good place to start would be this tutorial, at the bottom of page 3! 
 http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
 
-But we work in 3d, and that's a two dimensional variance anylysis. So what we need is a matrix of covariance. The below code block is what a basic covariance matrix looks like with the functions we defined above.
+We work in 3d, and the above code is for a two dimensional variance anylysis, so that's not entirely helpful. And not only that, it's not really a full description of the variance in that data set, as we need to take into account the variance on each dimension seperately as well! What we really need is a matrix of covariance. The below code block is what a basic covariance matrix looks like with the functions we defined above.
 
 ```c
+...
+
 //a sample covariance matrix
 
 int x = 0, y = 1, z = 2;
@@ -226,9 +228,11 @@ set(covar(0, x, x), covar(0, x, y), covar(0, x, z),
 	covar(0, z, x), covar(0, z, y), covar(0, z, z))
 ```
 
+And that's really it! However all that vex code looks ugly, so let's rebuild this in a cuter way.
+
 ### COVARIANCE MATRICES AND DOING THIS WHOLE TING SMARTER 
 
-The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build **OUR FULL COVARIANCE MATRIX** in a way that's so much more algebraic and Houdini way in execution.
+The above matrix is really interesting for a few reasons, but the most important one for us is the fact that its symmetric along the diagonal. Meaning if we rethink our above code in a more clever way, we can build **OUR FULL COVARIANCE MATRIX** in a way that's so much more elegant in execution.
 
 First step is to find the average position of our mesh, for that a simple attribute promote from point `P` to a detail attribute will work.
 
@@ -281,47 +285,168 @@ setdetailattrib(0, "covar", covar, "add");
 That's so much cleaner. I love you math.
 
 
-### EIGEN VECTORS ARE FUNKY STUFF 
+### Introduction to Eigen Vectors and Values
 
-Alright now comes the actually difficult part. It's not difficult in implementation, but it is difficult to understand. We are now entering the world of principal component analysis (PCA for short). PCA at it's core is a tool that helps us as wizards, determine the principal components of a given input. Below is a simple diagram showing the principal curvatures (slightly different) of a given surface. The principal components, are the directions of flow that most accuractely describe the surface. That's still really hard to understand... An even easier way to describe it, is if we want an oriented, 3d bounding box, it needs to be oriented to the principal components of the input mesh.... fuck.
+Eigen vectors are not the easiest subject to broach, but principal component analysis is to me the simplest and most straightforward example of a practical application of them.
 
+An eigen vector is simply a vector which when transformed by the matrix it corresponds with (the one we extracted it from), it does nothing but uniformly scales. The amount it scales, is known as the eigen value. In math terms, where A is our input matrix, x is our eigen vector, and ![Lambda](./img/lambda.png) is our eigen value.
 
-In math terms to solve this, we need to find the eigen vectors of our covariance matrix. Or in other words, what are the vectors that when transformed by the covariance matrix, do nothing outside of scaling uniformly. Or put even more simply (and shamelessly stolen from wikipedia) in the geometric context, an eigenvector tells you the direction in which stretching will occur, and the eigenvalues, tells you the amount of stretch applied in that given direction. However, this assumes that our matrix has non imaginary eigenvalues. Negative Eigenvalues reverse the direction of stretch. 
+![Eigen Value Theorem](./img/eigen_value_solution.png)
 
-So in the context of our covariance matrix, what is the axis that has the most variance (found through power iteration), what axis has the least variance, and then from there the final axis is the cross product of the other two, as they should be orthogonal to each other.
+Eigen vectors and values have far more properties than that, but since this is our intro, let's hold off on that... For higher dimensional problems or problems with non real eigen vectors, this definition is not the easiest to visualize, but since our problem is 3 dimensional, it's incredibly easy for us to visualize! Keep in mind that an NxN matrix will have N eigen vectors, so for our 3x3 matrix, we should expect 3 eigen vectors.
 
-Yeah. Like i said it's difficult, and like honestly it just doesn't make that much since till you try it. If you want more insite into eigenvectors, peep this video by 3blue1brown:
+So then how does that apply to our covariance matrix? Well some smart people realized that the first, or largest, eigen vector of a covariance matrix, corresponds to the vector direction with the greatest amount of variance. And all subsequent **orthogonal** eigen vectors, will correspond to the vector direction with the next highest level of variance. 
 
-And then finally the code:
+Luckily for us we've ensured our eigen vectors will be orthogonal, due to the fact that a symmetric matrix will always have orthogonal eigen vectors. I'm not going to prove why that is, if you want more insite into that, check out this paper: http://www.quandt.com/papers/basicmatrixtheorems.pdf, (Theorem 2.)
 
+I think we're ready to start solving for some eigen vectors. There are tons of different ways to extract the eigen vectors from a matrix, but since this our intro we're going to take the simplest approach Power Iteration. 
+
+Power iteration is fuckin easy.
+
+Below is a step by step breakdown of the algorithm, but in a single sentence we basically just take a random vector, and multiply it by the matrix whose eigen vector we're trying to solve for, over and over until it converges to an eigenvector. However this alone isn't enough, as the resulting vector will be scaled by the input matrix, so we need to normalize it at each iteration to prevent it from tending off to infinity, or shrinking to zero. 
+
+And now in code form:
 ```c
-//power iteration to find the largest eigen vector
-//https://en.wikipedia.org/wiki/Power_iteration
+vector power_iteration(matrix3 m){
+	//some random vector
+	vector x = rand(set(1, 5, 2));
 
-function vector[] p_iter(matrix3 m){
-    vector bk = rand(determinant(m) * rand(determinant(m)));
-    vector w = rand(determinant(m) * rand(determinant(m)));
-    vector array[];
-    for(int i = 0; i < 100; i++){
-        //power iteration
-        bk *= m;
-        bk = normalize(bk);
-        
-        //inverse iteration
-        w *= invert(m); 
-        w = normalize(w);
-        }
-    
-    push(array, bk);
-    push(array, w);
-    return array;
+	vector y = x;
+
+	//num of iterations to run over
+	int iterations = 100;
+
+	for(int i = 0; i < iterations; i++){
+		y *= m;
+		y = normalize(y);
+	}
+	return y;
 }
-
-v@x = p_iter(3@m)[0];
-v@y = p_iter(3@m)[1];
 ```
 
-And that's pretty much it....
+One more thing to note, is that you can (and should) test for convergence to the eigen vector, meaning if the normalized and transformed vector from the current iteration, isnt all that different from the previous iterations vector, break the loop!
 
-I donno it's kinda confusing too be honest, and I'm sorry. But like i said this does really involve a lot of deep linear algebra concepts. And it's okay for it to not make sense, this shit can take a minute for it to truly click. I think the best way is to just put it into practice and fuck around with the code, the best way to figure out why something was done is to try to figure out the problem yourself. 
+```c
+vector power_iteration(matrix3 m){
+	vector x = rand(set(1, 5, 2));
+	vector y = x;
+	int iterations = 100;
 
+	vector last_vect = y;
+	float epsilon = 1e-5;
+	for(int i = 0; i < iterations; i++){
+		last_vect = y;
+
+		y *= m;
+		y = normalize(y);
+
+		if(dot(last_vect, y) < epsilon) break;
+	}
+	return y;
+}
+```
+Boom you've mastered power iteration (well not really, you're still a scrub tbh, I'll fight you).
+
+It's really that simple. Another thing to note is that this will only solve for our largest eigen vector. If we want to solve for all eigen vectors in one operation, we can use Singular Value Decomposition or some other eigen solver (not that you cant use power iteration in your SVD algo). But since we're lazy, and this post is long enough as it is, let's just use inverse iteration. If power iteration is solving by multiplying by our input matrix, inverse iteration is the exact same process, but with the inverse of our input matrix.
+
+```c
+vector inverse_iteration(matrix3 m){
+	vector x = rand(set(1, 5, 2));
+	vector y = x;
+	int iterations = 100;
+
+	vector last_vect = y;
+	float epsilon = 1e-5;
+
+	for(int i = 0; i < iterations; i++){
+		y *= invert(m);
+		y = normalize(y);
+
+		if(dot(last_vect, y) < epsilon) break;
+	}
+	return y;
+}
+```
+
+This will return our smallest eigen vector, and since this is 3 dimensions and the final eigen vectors have to be orthogonal, we can make the assumption that our final unknown is the cross product between those two solved eigen vectors!
+
+With all that in mind, let's do it for our covariance matrix, and see what kind of output we get.
+```c
+
+vector inverse_iteration(matrix3 m){
+	vector x = rand(set(1, 5, 2));
+	vector y = x;
+	int iterations = 100;
+
+	vector last_vect = y;
+	float epsilon = 1e-5;
+	
+	for(int i = 0; i < iterations; i++){
+		y *= invert(m);
+		y = normalize(y);
+
+		if(dot(last_vect, y) < epsilon) break;
+	}
+	return y;
+}
+
+
+
+vector power_iteration(matrix3 m){
+	vector x = rand(set(1, 5, 2));
+	vector y = x;
+	int iterations = 100;
+
+	vector last_vect = y;
+	float epsilon = 1e-5;
+	for(int i = 0; i < iterations; i++){
+		last_vect = y;
+
+		y *= m;
+		y = normalize(y);
+
+		if(dot(last_vect, y) < epsilon) break;
+	}
+	return y;
+}
+
+
+v@x = power_iteration(3@covar);
+v@y = inverse_iteration(3@covar);
+v@z = cross(v@x, v@y);
+```
+
+Finally if we want to use this for the purposes of an oriented bounding box, then we need the eigen vectors to have lengths equal to their corresponding eigen values. If we refer back to this equation:
+![Eigen Value Theorem](./img/eigen_value_solution.png)
+then you'll note that we only need to transform our eigen vectors by our input matrix, to achieve that result.
+
+So finally our oriented bounding box is defined by this matrix result!
+
+```c
+...
+
+v@x = power_iteration(3@covar);
+v@y = inverse_iteration(3@covar);
+v@z = cross(v@x, v@y);
+
+v@x *= 3@covar;
+v@y *= 3@covar;
+v@z *= 3@covar;
+
+
+3@bounding_box = set(v@x, v@y, v@z);
+```
+
+
+### FINAL DISCLAIMER
+
+Power iteration is pretty unstable, and the input random vector's sign will affect the output eigen vector's sign. This will cause weird bounding box flipping depending, if you were expecting this to work on animated inputs.
+The MIT PDF i've linked below offers one potential solution for that. I'm going to make a follow up to this post discussing how you can use a spanning tree to re-orient the components, in the case PCA is used to describe point-cloud normals.
+
+Please post up any and all comments/questions! I'd love to hear what ya'll think about this post.
+<3 <3 <3
+
+REFERENCES:
+http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
+https://jeremykun.com/2012/06/28/principal-component-analysis/
+http://web.mit.edu/18.06/www/Spring17/Power-Method.pdf
