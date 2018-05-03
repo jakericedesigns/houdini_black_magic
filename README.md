@@ -301,7 +301,7 @@ Luckily for us we've ensured our eigen vectors will be orthogonal, due to the fa
 
 I think we're ready to start solving for some eigen vectors. There are tons of different ways to extract the eigen vectors from a matrix, but since this our intro we're going to take the simplest approach Power Iteration. 
 
-Power iteration is fuckin easy.
+### Power iteration is fuckin easy.
 
 Below is a step by step breakdown of the algorithm, but in a single sentence we basically just take a random vector, and multiply it by the matrix whose eigen vector we're trying to solve for, over and over until it converges to an eigenvector. However this alone isn't enough, as the resulting vector will be scaled by the input matrix, so we need to normalize it at each iteration to prevent it from tending off to infinity, or shrinking to zero. 
 
@@ -450,3 +450,4 @@ REFERENCES:
 http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf
 https://jeremykun.com/2012/06/28/principal-component-analysis/
 http://web.mit.edu/18.06/www/Spring17/Power-Method.pdf
+http://www.quandt.com/papers/basicmatrixtheorems.pdf
