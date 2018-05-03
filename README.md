@@ -8,32 +8,18 @@ Right now it's quite unprofessionally written and has not been proofread at all.
 This is honestly like stuff you should only whip out when trying to impress a honey u kno? 
 
 ## EXAMPLE 1 - WRITING VEX WITH PYTHON
-SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript orr python. Take a second and let that sink in, python.
+SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript or python. Take a second and let that sink in, python.
 
-### IN WRANGLE #1 RUNNING OVER POINTS:
-```c
-float r = rand(@ptnum) * 3;
-r = floor(r);
+### IN ANY TYPE OF WRANGLE
 
-if(r == 0) s@class = "a";
-if(r == 1) s@class = "b";
-if(r == 2) s@class = "c";
-
-f@val;
-```
+Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. You'll know it's working because the text box will turn purple.
+![Keyframe](./img/set_key.png)
+![Set Py](./img/set_lang_py.png)
 
 
-### IN WRANGLE #2 RUNNING OVER DETAILS:
-
-Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. 
 Like any python expression you need to return your result. So any string we return that contains vex code will get executed by this parameter.
 
 ```py
-node = hou.pwd()
-input = node.inputs()
-geo = input[0].geometry()
-points = geo.points()
-
 #define our functions
 out = """
 float aa(float i){ 
@@ -46,12 +32,13 @@ float ac(float i){
     return sqrt(i);
 } \n"""
 
-out += "float val;\n"
+#define our class suffixes
+classes = "abc"
 
-for i, point in enumerate(points):
-	#class attribute drives which function is selected. 
-    out += "val = a%s(10);\n" % (point.attribValue("class"))
-    out += "setpointattrib(0, 'val', %d, val);\n" % i
+for class_name in classes:
+    #create a new attribute with the class name and output
+    #use .format() instead of % cuz that's the newer convention for string replacement.
+    out += "@a{0} = a{0}(10);\n".format(class_name)
 
 return out
    
@@ -59,37 +46,14 @@ return out
 
 
 
-### WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!. 
-All it does is show how you can dynamically complete VEX expressions with python, notice how im filling in the suffix of the function name in the first line of code in the for loop?
+### WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!
+We're basically using python to generate a few functions, and then we return a unique attribute based on the called function's name!
 
-This line specifically: `out += "val = a%s(10);\n" % (point.attribValue("class"))`
+This line specifically: `out += "@a{} = val;\n".format(class_name)` stores that value in an attribute named after the called function! Again, this is just outputting vex code, so if you click on the VEXpression parm, you'll see the output vex! Neat!!!!!
 
-If you want to see the vex this outputs just click on the VEXpression parm and boom you can see what this outputs. wowowowowowow.
-I only have 4 points in this example, so here's what that would look like when it gets parsed:
+![Set Py](./img/py_output.png)
 
-```c
-    float aa(float i){ 
-        return pow(i, 2); 
-    }
-    float ab(float i){ 
-        return exp(i); 
-    }
-    float ac(float i){ 
-        return sqrt(i);
-    } 
-float val;
-val = ab(10);
-setpointattrib(0, 'val', 0, val);
-val = aa(10);
-setpointattrib(0, 'val', 1, val);
-val = ac(10);
-setpointattrib(0, 'val', 2, val);
-val = aa(10);
-setpointattrib(0, 'val', 3, val);
-```
-BAM DONE. NEXT!
-
-
+Though I can't say the formatting is incredible on the output vex... ;)
 
 
 ## EXAMPLE 2 - The Covariance Matrix/PCA
