@@ -8,7 +8,7 @@ Right now it's quite unprofessionally written and has not been proofread at all.
 This is honestly like stuff you should only whip out when trying to impress a honey u kno? 
 
 ## EXAMPLE 1 - WRITING VEX WITH PYTHON
-SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript or python. Take a second and let that sink in, python.
+SLAP DOWN A WRANGLE BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression section of a wrangle is actually just a parameter like any string parameter, just thiccer. So like any string parameter, you can use hscript or python. Take a second and let that sink in, python.
 
 ### IN ANY TYPE OF WRANGLE
 
@@ -267,7 +267,7 @@ I think we're ready to start solving for some eigen vectors. There are tons of d
 
 ### Power iteration is fuckin easy.
 
-Below is a step by step breakdown of the algorithm, but in a single sentence we basically just take a random vector, and multiply it by the matrix whose eigen vector we're trying to solve for, over and over until it converges to an eigenvector. However this alone isn't enough, as the resulting vector will be scaled by the input matrix, so we need to normalize it at each iteration to prevent it from tending off to infinity, or shrinking to zero. 
+In a single sentence, power iteration is just start with a random vector, multiply it by the matrix whose eigen vector we're trying to solve for, over and over until it converges to an eigenvector. However this alone isn't enough, as the resulting vector will be scaled by the input matrix, so we need to normalize it at each iteration to prevent it from tending off to infinity, or shrinking to zero. 
 
 And now in code form:
 ```c
