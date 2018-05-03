@@ -49,7 +49,7 @@ return out
 ### WHAT DOES THIS EVEN DOOOOOO. ANSWER: NOTHING!
 We're basically using python to generate a few functions, and then we return a unique attribute based on the called function's name!
 
-This line specifically: `out += "@a{} = val;\n".format(class_name)` stores that value in an attribute named after the called function! Again, this is just outputting vex code, so if you click on the VEXpression parm, you'll see the output vex! Neat!!!!!
+This line specifically: `out += "@a{0} = a{0}(10);\n".format(class_name)` both chooses the function to call, and stores it's value in a uniquely named attribute! Again, this is just outputting vex code, so if you click on the VEXpression parm, you'll see the output vex! Neat!!!!!
 
 ![Set Py](./img/py_output.png)
 
