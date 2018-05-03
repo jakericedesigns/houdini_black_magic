@@ -12,7 +12,7 @@ SLAP DOWN TWO WRANGLES BOOYYYYYYYYYYYYY. It's easy to miss that the VEXpression 
 
 ### IN ANY TYPE OF WRANGLE
 
-Right click you vexpression and drop down a keyframe and set the vexpression language to python. BOOM we're in. You'll know it's working because the text box will turn purple.
+Right click your VEXpression parm, drop down a keyframe and set the vexpression language to python. BOOM we're in. You'll know it's working because the text box will turn purple.
 ![Keyframe](./img/set_key.png)
 ![Set Py](./img/set_lang_py.png)
 
