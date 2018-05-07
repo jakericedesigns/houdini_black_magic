@@ -265,7 +265,7 @@ Luckily for us we've ensured our eigen vectors will be orthogonal, due to the fa
 
 I think we're ready to start solving for some eigen vectors. There are tons of different ways to extract the eigen vectors from a matrix, but since this our intro we're going to take the simplest approach Power Iteration. 
 
-### Power iteration is fuckin easy.
+### Power iteration is easy as heck
 
 In a single sentence, power iteration is just start with a random vector, multiply it by the matrix whose eigen vector we're trying to solve for, over and over until it converges to an eigenvector. However this alone isn't enough, as the resulting vector will be scaled by the input matrix, so we need to normalize it at each iteration to prevent it from tending off to infinity, or shrinking to zero. 
 
