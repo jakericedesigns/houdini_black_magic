@@ -493,7 +493,7 @@ if(@prevpt != -1){
 }
 ```
 
-Now if we start adding more iterions to our For-Each block, and visualize the results, we'll notice our normals converge to a consistent sign. In the final file for this tutorial, I've added the addition of an opencl normal flipper, which is much faster than the vex version.
+Now if we start adding more iterations to our For-Each block, and visualize the results, we'll notice our normals converge to a consistent sign. In the final file for this tutorial, I've added the addition of an opencl normal flipper, which is much faster than the vex version.
 
 ![Normal Flipping](./img/normal_flipping.gif)
 
