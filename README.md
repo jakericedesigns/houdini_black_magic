@@ -389,9 +389,32 @@ v@z = cross(v@x, v@y);
 
 ```
 
-This is all well and good, but it's important to see a practical application of this, as currently this is just some whacky math bullshittery. The easiest example that we can bump out right away is an oriented bounding box. In order to define the oriented bounding box, all we need to do is transform our input geometry by the matrix of eigen vectors we established above, rotating it onto one of our principal axes. We then calculate our bounding box, and finally we transform by the inverse of our eigen vector matrix, to return the oriented bounding box. 
+This is all well and good, but it's important to see a practical application of this, as currently this is just some whacky math bullshittery. The easiest example that we can bump out right away is an oriented bounding box. In order to define the oriented bounding box, all we need to do is transform our input geometry by the inverse of the matrix of eigen vectors we established above, rotating it onto one of our principal axes. We then calculate our bounding box, and finally we transform by the our original eigen vector matrix, to return the oriented bounding box.
+
+We need two wrangles to compute this oriented bounding box.
+
+Wrangle 1:
+```c
+///THIS GOES INTO A POINT WRANLGE
+//Input 0 is our pighead
+
+v@P *= invert(matrix3(detail(1, "eigen_vectors")));
+```
+
+Slap your bbox down inbetween these two wrangles.
+
+Wrangle 2:
+
+```c 
+THIS GOES INTO A POINT WRANGLE
+//Input 0 is our transfomed pigheads bounding box
+//Input 1 is our transformed pighead
+v@P *= detail(1, "eigen_vectors");
+```
 
 ![Oriented BBox](./img/oriented_bounding_box.gif)
+
+Keep in mind the orientation as there's lots of potential of sign flipping due to power iteration being power iteration. You'll see what I mean in the following section.
 
 ### Point Cloud Normals
 
@@ -457,6 +480,9 @@ But we're not fufu-lames so we want accurate point normals over the entirety of 
 Houdini once again comes to the rescue. 
 
 Let's drop down a connect adjacent pieces node in "Adjacent Points" mode. We can also check step 1 off the list, as we've now made a nearest neighbor graph.
+
+![Connection Graph](./img/connect_adj.png)
+
 Step 2 is a bit more involved, or at least it would be if not for Houdini being bae. The node Find Shortest Path, computes a spanning tree from your mesh, right out of the gate. However, we don't need it to output a mesh, we only need to find the parent node of any given point. 
 
 Prior to computing the spanning tree, we should give our points ID's, as houdini needs this to compute the tree.
