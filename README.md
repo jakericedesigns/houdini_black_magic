@@ -495,7 +495,7 @@ if(@prevpt != -1){
 
 Now if we start adding more iterions to our For-Each block, and visualize the results, we'll notice our normals converge to a consistent sign. In the final file for this tutorial, I've added the addition of an opencl normal flipper, which is much faster than the vex version.
 
-![Normal Flipping](./img/normal_flipping.png)
+![Normal Flipping](./img/normal_flipping.gif)
 
 But honestly this is all we need to do to give our pointcloud consistent normals. There are more advanced approaches to this problem, but I hope this introduction to the topic inspires you to do some more research into other methods, and their uses.
 
