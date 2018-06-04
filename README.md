@@ -338,6 +338,7 @@ vector inverse_iteration(matrix3 m){
 This will return our smallest eigen vector, and since this is 3 dimensions and the final eigen vectors have to be orthogonal, we can make the assumption that our final unknown is the cross product between those two solved eigen vectors!
 
 Watching the vectors converge is really interesting, in the case of this simple scatter, the eigenvectors converge relatively quickly:
+
 ![Eigen Convergence](./img/converging_eigenvectors.gif)
 
 With all that in mind, let's do it for our covariance matrix, and see what kind of output we get.
@@ -391,6 +392,8 @@ v@z = cross(v@x, v@y);
 This is all well and good, but it's important to see a practical application of this, as currently this is just some whacky math bullshittery. The easiest example that we can bump out right away is an oriented bounding box. In order to define the oriented bounding box, all we need to do is transform our input geometry by the matrix of eigen vectors we established above, rotating it onto one of our principal axes. We then calculate our bounding box, and finally we transform by the inverse of our eigen vector matrix, to return the oriented bounding box. 
 
 ![Oriented BBox](./img/oriented_bounding_box.gif)
+
+### Point Cloud Normals
 
 A more fun example we can play with, is giving a point cloud some normals, to make meshing easier amongst other things. Currently we're using PCA as a global operation over our entire mesh. But if we restrict the operation to a given point, and the points surrounding it, then we can draw totally different intuitions about the object we're analyzing. One of those intuitions being, an approximation of surface normals.
 
@@ -479,6 +482,7 @@ vector nj = point(0, "y", pp[1]);
 ```
 
 Make sure you check on the "Primitive Cost Attribute" in the "Path Costs" tab of the find shortest path node, and set the string to `weight`.
+
 ![Prim Weights](./img/prim_wights.png)
 
 FRICK!!!!!!!!! Step 2 is now complete, we're onto the third and final step.
@@ -509,7 +513,11 @@ Please post up any and all comments/questions! I'd love to hear what ya'll think
 
 REFERENCES:
 http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf [1]
+
 https://jeremykun.com/2012/06/28/principal-component-analysis/ [2]
+
 http://web.mit.edu/18.06/www/Spring17/Power-Method.pdf [3]
+
 http://www.quandt.com/papers/basicmatrixtheorems.pdf [4]
+
 http://pointclouds.org/documentation/tutorials/normal_estimation.php [5]
